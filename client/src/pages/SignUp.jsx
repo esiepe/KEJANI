@@ -57,7 +57,7 @@ export default function SignUp() {
         className='border p-3 rounded-lg' id='password' 
         onChange={handleChange}/>
         <button disabled={loading} className=' bg-slate-700 text-white p-3
-        rounde-lg uppercase hover:opacity-95 
+        rounded-lg uppercase hover:opacity-95 
         disabled:opacity-80'>
           {loading ? "Loading..." : "Sign Up"}
         </button>
