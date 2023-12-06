@@ -22,6 +22,18 @@ const listingSchema = new mongoose.Schema(
             type: Boolean,
             required: true,
         },
+        wifi: {
+            type: Boolean,
+            required: true,
+        },
+        rent: {
+            type: Number,
+            required: true,
+        },
+        units: {
+            type: Number,
+            required: true,
+        },
         imageUrls: {
             type: Array,
             required: true,
