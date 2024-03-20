@@ -8,10 +8,15 @@ import {
   import { app } from "../firebase";
   import { useSelector } from "react-redux";
   import { useNavigate, useParams } from "react-router-dom";
+  import { useJsApiLoader, GoogleMap, Marker, DirectionsService, DirectionsRenderer } from "@react-google-maps/api"
   
   export default function UpdateListing() {
     const { currentUser } = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const { isLoaded } = useJsApiLoader({
+      googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+    })
+    const center = {lat: -0.1674, lng: 35.9649}
     const params = useParams();
     const [files, setFiles] = useState([]);
     const [formData, setFormData] = useState({
@@ -19,6 +24,10 @@ import {
       name: "",
       description: "",
       address: "",
+      lat: center.lat,
+      lng: center.lng,
+      distance: "",
+      duration: "",
       size: "",
       indoorPlumbing: false,
       wifi: false,
@@ -29,6 +38,32 @@ import {
     const [uploading, setUploading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
+
+    const handleMapClick =(e) => {
+      const clickedLat = e.latLng.lat()
+      const clickedLng = e.latLng.lng()
+      setFormData({...formData, lat: clickedLat, lng: clickedLng})
+    }
+    const calculateRoute = async () => {
+      if(window.google) {
+        const directionsService  = new window.google.maps.DirectionService()
+        const results = await directionsService.route({
+          origin: { lat: formData.lat, lng: formData.lng },
+          destination: center,
+          travelMode: window.google.maps.TravelMode.DRIVING,
+        })
+
+        if(results && results.routes.length > 0) {
+          const route = results.routes[0]
+          const distance= route.legs[0].distance.text
+          const duration = route.legs[0].duration.text
+          setFormData({...formData, distance: distance, duration: duration})
+        }
+      }
+    }
+    useEffect(() => {
+      calculateRoute()
+    }, [formData.lat, formData.lng])
     useEffect(() => {
         const fetchListing = async () => {
             const listingId = params.listingId;
@@ -42,6 +77,7 @@ import {
         }
         fetchListing();
     }, [])
+    console.log(formData)
     const handleImageSubmit = () => {
       if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
         setUploading(true);
@@ -193,6 +229,21 @@ import {
               onChange={handleChange}
               value={formData.address}
             />
+            { !isLoaded ? 
+            <p>Loading map...</p> :
+            <GoogleMap
+              zoom={13}
+              mapContainerStyle={{width: '100%', height: '300px'}}
+              center={{lat: formData.lat, lng: formData.lng}}
+              onClick={handleMapClick}
+              options={{
+                mapTypeControl: false,
+                streetViewControl: false,
+              }}
+            >
+              <Marker position={{lat: formData.lat, lng: formData.lng}}/>
+            </GoogleMap>
+          }
             <div className="flex gap-6 flex-wrap">
               <div className="flex items-center gap-2">
                 <input

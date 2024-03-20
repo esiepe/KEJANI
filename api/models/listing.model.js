@@ -14,6 +14,22 @@ const listingSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        lat: {
+            type: Number,
+            required: false,
+        },
+        lng: {
+            type: Number,
+            required: false,
+        },
+        distance:{
+            type: String,
+            required: false,
+        },
+        duration:{
+            type: String,
+            required: false,
+        },
         size: {
             type: String,
             required: true,
