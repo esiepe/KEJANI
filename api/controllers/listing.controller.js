@@ -62,19 +62,19 @@ export const getListings = async (req, res, next) => {
         const startIndex = parseInt(req.query.startIndex) || 0
         let wifi = req.query.wifi
 
-        if (wifi === undefined || wifi === false) {
+        if (wifi === undefined || wifi === 'false') {
             wifi = { $in: [false, true] }
         }
 
         let indoorPlumbing = req.query.indoorPlumbing
 
-        if (indoorPlumbing === undefined || indoorPlumbing === false) {
+        if (indoorPlumbing === undefined || indoorPlumbing === 'false') {
             indoorPlumbing = { $in: [false, true] }
         }
 
         let size = req.query.size
 
-        if (size === undefined || size ===false) {
+        if (size === undefined || size === 'false') {
             size = { $in: ['single-room', 'double-room', 'one-bedroom', 'bedsitter', 'two-bedroom'] }
         }
 
